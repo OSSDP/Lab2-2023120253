@@ -17,45 +17,34 @@ import java.util.*;
 
 class Solution {
     public String multiply(String num1, String num2) {
-        if (num1.equals("0") | num2.equals("0")) {
+        if (num1.equals("0") || num2.equals("0")) {
             return "0";
         }
-        String ans = "0";
+        
         int m = num1.length(), n = num2.length();
-        for (int i = n - 1; i >= 0; i--) {
-            StringBuffer curr = new StringBuffer();
-            int add = 0;
-            for (int j = n - 1; j > i; j--) {
-                curr.append(0);
+        int[] result = new int[m + n]; // 用于存储每一位乘积的结果
+        
+        // 逐位计算乘积
+        for (int i = m - 1; i >= 0; i--) {
+            int x = num1.charAt(i) - '0';
+            for (int j = n - 1; j >= 0; j--) {
+                int y = num2.charAt(j) - '0';
+                int product = x * y + result[i + j + 1];
+                
+                result[i + j + 1] = product % 10; // 当前位
+                result[i + j] += product / 10;   // 进位
             }
-            int y = num2.charAt(i) - '0';
-            for (int j = m - 1; j >= 0; j--) {
-                int x = num1.charAt(j) - '0';
-                int product = x * y + add;
-                curr.append(product % 10);
-                add = product / 10;
-            }
-            if (add != 0) {
-                curr.append(add % 10);
-            }
-            ans = addStrings(ans, curr.reverse().toString());
         }
-        return ans;
-    }
-
-    public String addStrings(String num1, String num2) {
-        int i = num1.length() - 1, j = num2.length() - 1, add = 0;
-        StringBuffer ans = new StringBuffer();
-        while (i >= 0 || j >= 0 || add != 0) {
-            int x = i >= 0 ? num1.charAt(i) - '0' : 0;
-            int y = j >= 0 ? num2.charAt(j) - '0' : 0;
-            int result = x + y + add;
-            ans.append(result % 10);
-            add = result / 10;
-            i--;
-            j--;
+        
+        // 转换结果为字符串
+        StringBuilder sb = new StringBuilder();
+        for (int num : result) {
+            // 跳过开头的 0
+            if (!(sb.length() == 0 && num == 0)) {
+                sb.append(num);
+            }
         }
-        ans.reverse();
-        return ans.toString();
+        
+        return sb.length() == 0 ? "0" : sb.toString();
     }
 }
